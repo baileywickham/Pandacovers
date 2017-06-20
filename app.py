@@ -6,8 +6,10 @@ app = Flask(__name__)
 @app.route('/')
 def my_form():
     return render_template("index.html")
+@app.route('/', methods=['POST'])
 def my_form_post():
     text1 = request.form['inputDate']
-    return "<h1> hello world !</h1>"
+    target = open('tmp', 'w')
+    target.write(text1)
 if __name__ == '__main__':
     app.run()
