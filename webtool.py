@@ -1,6 +1,6 @@
 from flask import Flask, flash
 import flask_login
-
+#this came from alex init, it may need to be changed with __init__.py. TODO: add login.html template as login page.
 # Prepare flask and login manager for use
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
