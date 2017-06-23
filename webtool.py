@@ -1,15 +1,45 @@
-from flask import Flask
-from flask import request
-from flask import render_template
-#this file was for testing flask with wsgi scripts, getting this to take data and store it from the page was the important parts.
+from flask import Flask, flash
+import flask_login
+
+# Prepare flask and login manager for use
 app = Flask(__name__)
-@app.route('/')
-def my_form():
-    return render_template("index.html")
-@app.route('/', methods=['POST'])
-def my_form_post():
-    text1 = request.form['inputDate']
-    target = open('tmp', 'w')
-    target.write(text1)
-if __name__ == '__main__':
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
+class User(flask_login.UserMixin):
+	pass
+
+@login_manager.user_loader
+def user_loader(username): # Prepares user for non-login activities
+	if username not in users:
+		return
+	user = User()
+	user.id = username
+	return user
+
+@login_manager.request_loader
+def request_loader(request):
+	username = request.form.get('inputUsername')
+	if username not in users:
+		return
+	user = User()
+	user.id = username
+
+	user.isauthenticated = request.form['inputPassword'] == users[username]['inputPassword']
+	return user
+
+@app.route('/templates/login', methods=['GET', 'POST'])
+def login():
+	if flask.request.method == 'GET':
+		return
+	username = flask.request.form['inputUsername']
+	if flask.request.form['inputPassword'] == users[username]['inputUsername']:
+		user = User()
+		user.id = email
+		flask_login.login_user(user)
+		return flask.redirect(flask.url_for('protected'))
+	return flash('incorect password')
+
+if __name__ == "__main__":
     app.run()
