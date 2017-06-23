@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import render_template
-
+#this file was for testing flask with wsgi scripts, getting this to take data and store it from the page was the important parts.
 app = Flask(__name__)
 @app.route('/')
 def my_form():
