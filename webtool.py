@@ -1,10 +1,14 @@
-from flask import Flask, flash
+from flask import Flask, flash, render_template
 import flask_login
 #this came from alex init, it may need to be changed with __init__.py. TODO: add login.html template as login page.
 # Prepare flask and login manager for use
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+
+@app.route('/')
+def my_form():
+    return render_template("login.html")
 
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
