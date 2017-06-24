@@ -1,7 +1,9 @@
 from flask import Flask, flash, render_template
 import flask_login
-#this came from alex init, it may need to be changed with __init__.py. TODO: add login.html template as login page.
+#this came from alex init, it may need to be changed with __init__.py. 
 # Prepare flask and login manager for use
+#TODO: autheticate user; check if user is auth and return index.html; also serve page to outside viewers
+
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
