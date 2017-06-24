@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template
+from flask import Flask, flash, render_template, request
 import flask_login
 #this came from alex init, it may need to be changed with __init__.py. 
 # Prepare flask and login manager for use
@@ -15,6 +15,19 @@ def my_form():
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
 	pass
+
+@app.route("/create")
+@login_required
+def create():
+	return render_template("index.html")
+
+@app.route('/create', methods=[POST])
+def create_post():
+	date = request.form['inputDate']
+	location = request.form['inputLocation']
+	fob = request.form['inputFoB']
+	askLocation = request.form['inputAskingLocation']
+	extraText = request.form['extraText']
 
 @login_manager.user_loader
 def user_loader(username): # Prepares user for non-login activities
