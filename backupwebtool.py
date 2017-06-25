@@ -8,7 +8,7 @@ app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def my_form():
     return render_template("login.html")
 
@@ -21,7 +21,7 @@ class User(flask_login.UserMixin):
 #def create():
 #	return render_template("index.html")
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/create', methods=['POST'])
 def create_post():
 	date = request.form['inputDate']
 	location = request.form['inputLocation']
@@ -30,7 +30,7 @@ def create_post():
 	extraText = request.form['extraText']
 
 @login_manager.user_loader
-def user_loader(username, methods=['GET', 'POST']): # Prepares user for non-login activities
+def user_loader(username): # Prepares user for non-login activities
 	if username not in users:
 		return
 	user = User()
@@ -38,7 +38,7 @@ def user_loader(username, methods=['GET', 'POST']): # Prepares user for non-logi
 	return user
 
 @login_manager.request_loader
-def request_loader(request, methods=['GET', 'POST']):
+def request_loader(request):
 	username = request.form.get('inputUsername')
 	if username not in users:
 		return
