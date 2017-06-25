@@ -1,5 +1,7 @@
 from flask import Flask, flash, render_template, request
 import flask_login
+from flask_login import current_user
+
 #this came from alex init, it may need to be changed with __init__.py. 
 # Prepare flask and login manager for use
 #TODO: autheticate user; check if user is auth and return index.html; also serve page to outside viewers
@@ -10,7 +12,10 @@ login_manager.init_app(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def my_form():
-    return render_template("login.html")
+	if current_user.is_authenticated:
+		return render_template('index.html')
+	else: 
+   		return render_template("login.html")
 
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
@@ -57,7 +62,8 @@ def login():
 		user = User()
 		user.id = email
 		flask_login.login_user(user)
-		return flask.redirect(flask.url_for('protected'))
+		#return flask.redirect(flask.url_for('protected'))
+		return render_template('index.html')
 	return flash('incorect password')
 
 if __name__ == "__main__":
