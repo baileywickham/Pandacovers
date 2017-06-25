@@ -16,12 +16,12 @@ users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later
 class User(flask_login.UserMixin):
 	pass
 
-@app.route("/create")
-@login_required
-def create():
-	return render_template("index.html")
+#@app.route("/create")
+#@login_required
+#def create():
+#	return render_template("index.html")
 
-@app.route('/create', methods=[POST])
+@app.route('/create', methods=['POST'])
 def create_post():
 	date = request.form['inputDate']
 	location = request.form['inputLocation']
