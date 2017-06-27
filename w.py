@@ -42,7 +42,26 @@ def request_loader(request, methods=['GET', 'POST']):
 @app.route('/', methods=['GET', 'POST'])
 def login():
         print 'hello world'
-	return render_template('index.html')
+        return render_template('login.html')
+	if request.method == 'GET':
+             print 'hi  asd  world'
+             return render_template('login.html')
+        error = ''
+
+        username = request.form['inputUsername']
+
+        if request.method == 'POST':
+                print 'this is the post method'
+		if request.form['inputPassword'] != users[username]['inputUsername']:
+			error = 'wrong pw'
+                        print 'this is the worng password'
+                else:
+			user = User()
+                        print 'this is the right pw'
+			user.id = email
+			flask_login.login_user(user)
+			return redirect(url_for('create'))
+	return render_template('login.html', error = error)
 
        
 
@@ -56,4 +75,4 @@ def create_post():
 	extraText = request.form['extraText']
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
