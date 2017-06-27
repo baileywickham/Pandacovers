@@ -11,21 +11,11 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 app.secret_key = 'thisissupersecret'
 
-@app.route('/welcome', methods=['GET', 'POST'])
-def my_form():
-	return render_template("login.html")
 
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
 	pass
 
-@app.route('/create', methods=['GET', 'POST'])
-def create_post():
-	date = request.form['inputDate']
-	location = request.form['inputLocation']
-	fob = request.form['inputFoB']
-	askLocation = request.form['inputAskingLocation']
-	extraText = request.form['extraText']
 
 @login_manager.user_loader
 def user_loader(username, methods=['GET', 'POST']): # Prepares user for non-login activities
@@ -38,29 +28,48 @@ def user_loader(username, methods=['GET', 'POST']): # Prepares user for non-logi
 
 @login_manager.request_loader
 def request_loader(request, methods=['GET', 'POST']):
-	username = request.form.get('inputUsername')
+	username = request.form['inputUsername']
 	if username not in users:
 		return
 	user = User()
 	user.id = username
+        
 	flash('this is the request loader method')
 	user.isauthenticated = request.form['inputPassword'] == users[username]['inputPassword']
 	return user
-
-@app.route('/templates/login', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def login():
-	flash('login method')
-	if flask.request.method == 'GET':
-		return
-	username = flask.request.form['inputUsername']
-	if flask.request.method == 'POST':
-		if flask.request.form['inputPassword'] != users[username]['inputUsername']:
-			flash('incorrect credentials')
-		else:
+        print 'hello world'
+        if request.method == 'GET':
+             print 'hi  asd  world'
+             return render_template('login.html')
+        error = ''
+
+        username = request.form['inputUsername']
+
+        if request.method == 'POST':
+                print 'this is the post method'
+		if request.form['inputPassword'] != users[username]['inputUsername']:
+			error = 'wrong pw'
+                        print 'this is the worng password'
+                else:
 			user = User()
+                        print 'this is the right pw'
 			user.id = email
 			flask_login.login_user(user)
 			return redirect(url_for('create'))
-	return render_template('login.html')
+	return render_template('login.html', error = error)
+
+       
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_post():
+	date = request.form['inputDate']
+	location = request.form['inputLocation']
+	fob = request.form['inputFoB']
+	askLocation = request.form['inputAskingLocation']
+	extraText = request.form['extraText']
+
 if __name__ == "__main__":
     app.run()
