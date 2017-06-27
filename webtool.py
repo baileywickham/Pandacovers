@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request
+from flask import Flask, flash, render_template, request, redirect, url_for
 import flask_login
 from flask_login import current_user
 
@@ -9,22 +9,15 @@ from flask_login import current_user
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+app.secret_key = 'thisissupersecret'
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/welcome', methods=['GET', 'POST'])
 def my_form():
-	if current_user.is_authenticated:
-		return render_template('index.html')
-	else: 
-   		return render_template("login.html")
+	return render_template("login.html")
 
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
 	pass
-
-#@app.route("/create")
-#@login_required
-#def create():
-#	return render_template("index.html")
 
 @app.route('/create', methods=['GET', 'POST'])
 def create_post():
@@ -40,6 +33,7 @@ def user_loader(username, methods=['GET', 'POST']): # Prepares user for non-logi
 		return
 	user = User()
 	user.id = username
+	flash('this is the user_loader method')
 	return user
 
 @login_manager.request_loader
@@ -49,22 +43,24 @@ def request_loader(request, methods=['GET', 'POST']):
 		return
 	user = User()
 	user.id = username
-
+	flash('this is the request loader method')
 	user.isauthenticated = request.form['inputPassword'] == users[username]['inputPassword']
 	return user
 
 @app.route('/templates/login', methods=['GET', 'POST'])
 def login():
+	flash('login method')
 	if flask.request.method == 'GET':
 		return
 	username = flask.request.form['inputUsername']
-	if flask.request.form['inputPassword'] == users[username]['inputUsername']:
-		user = User()
-		user.id = email
-		flask_login.login_user(user)
-		#return flask.redirect(flask.url_for('protected'))
-		return render_template('index.html')
-	return flash('incorect password')
-
+	if flask.request.method == 'POST':
+		if flask.request.form['inputPassword'] != users[username]['inputUsername']:
+			flash('incorrect credentials')
+		else:
+			user = User()
+			user.id = email
+			flask_login.login_user(user)
+			return redirect(url_for('create'))
+	return render_template('login.html')
 if __name__ == "__main__":
     app.run()
