@@ -10,7 +10,9 @@ app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 app.secret_key = 'thisissupersecret'
-
+@app.route('/hello', methods=['GET', 'POST'])
+def my_form():
+	return render_template("index.html")
 
 users = {'user': {'pw': 'password'}} # Temporary dictionary, mysql will be later implemented
 class User(flask_login.UserMixin):
@@ -40,7 +42,8 @@ def request_loader(request, methods=['GET', 'POST']):
 @app.route('/', methods=['GET', 'POST'])
 def login():
         print 'hello world'
-        if request.method == 'GET':
+        return render_template('login.html')
+	if request.method == 'GET':
              print 'hi  asd  world'
              return render_template('login.html')
         error = ''
