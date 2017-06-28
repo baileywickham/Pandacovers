@@ -10,6 +10,7 @@ app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'admin': 'password'}
+app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
 
 db = MySQLdb.connect(host="localhost",
 		     user="root",
