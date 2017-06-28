@@ -39,7 +39,7 @@ def login():
                 username = request.form['inputUsername']
                 pw = request.form['inputPassword']
 	if not user_exists(username):
-		return render_template('error.html') # Placeholder file, we need to sort out an error page
+		flash('incorrect username or password') # Placeholder file, we need to sort out an error page
 	password = get_password(username)
         user_id = 1234
 
