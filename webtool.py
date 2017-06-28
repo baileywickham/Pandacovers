@@ -1,14 +1,30 @@
 from flask import Flask, flash, render_template, request, redirect, url_for
 import flask_login
 from flask_login import current_user
+import MySQLdb
 
-#TODO: add database, login_user method, user_loader method, return userid and pw from database
+#TODO: login_user method, user_loader method
 # Prepare flask and login manager for use
 
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'admin': 'password'}
+
+db = MySQLdb.connect(host="localhost",
+		     user="root",
+		     passwd="alexiscool",
+		     db="panda-login")
+cur = db.cursor() # Cursor is needed for executing queries
+
+def user_exists(username):
+	if cur.execute("SELECT * FROM Users WHERE username = '" + username + "'") != 0:
+		return True
+	return False
+	# Non-zero value indicates that the user exists
+
+def get_password(username):
+	return cur.execute("SELECT password FROM Users WHERE username = '" + username + "'")
 
 #return loginpage on first login
 @app.route('/')
@@ -22,13 +38,16 @@ def login():
         if request.method == 'POST' and 'inputUsername' in request.form:
                 username = request.form['inputUsername']
                 pw = request.form['inputPassword']
+	if not user_exists(username):
+		return render_template('error.html') # Placeholder file, we need to sort out an error page
+	password = get_password(username)
         user_id = 1234
+
         User = UserClass(username, user_id, active=True)
-        if username == 'admin' and pw == 'password':
+        if pw == password: # pw and password do not appear to be the same. Needs to be fixed
                 login_user()
                 return render_template('index.html')
-        else:
-                print ('incorrect password')
+	db.close()
         return render_template('login.html')
 
 def login_user():
