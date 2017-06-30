@@ -25,7 +25,7 @@ def user_exists(username):
 	# Non-zero value indicates that the user exists
 
 def get_password(username):
-	return cur.execute("SELECT password FROM Users WHERE username = '" + username + "'")
+	return cur.execute("SELECT password FROM Users WHERE username = '" + username + "'") #this is the line that is causing the problem.
 
 #return loginpage on first login
 @app.route('/')
