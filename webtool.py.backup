@@ -6,11 +6,6 @@ import MySQLdb
 #TODO: login_user method, user_loader method
 # Prepare flask and login manager for use
 
-"""
-if sha256_crypt.verify(password, dbpass):
-              session['username'] = data['username']
-"""
-
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -25,39 +20,37 @@ db = MySQLdb.connect(host="localhost",
 
 def user_exists(username):
 	cur = db.cursor()
-	if cur.execute("SELECT * FROM Users WHERE username = %s", [username]) != 0:
+	if cur.execute("SELECT * FROM Users WHERE username = '" + username + "'") != 0:
 		return True
 	return False
 	# Non-zero value indicates that the user exists
 
 def get_password(username):
 	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = %s", [username])
-	if result > 1: # Data exists
-		data = cur.fetchone()
-		localpw = data['password']
-	# After gathering password, sha256 should be verified, see random paste above
+	localpw = cur.execute("SELECT password FROM Users WHERE username = '" + username + "'") #this is the line that is causing the problem.	
 	return localpw
-
+#return loginpage on first login
 @app.route('/')
 def splash():
         return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+        #fake userid because database doesnt exist yet. replace username == admin with a database check,
+        #including checking passwords
 	if request.method == 'POST' and 'inputUsername' in request.form:
                 username = request.form['inputUsername']
-                pw = request.form['inputPassword']
-		app.logger.info(pw)
+                pw = str(request.form.['inputPassword'])
 	if not user_exists(username):
-		flash('incorrect username')
-
+		flash('incorrect username') # Placeholder file, we need to sort out an error page
 	password = get_password(username)
-	target = open('tmp', 'w')
-	target.write(pw)
         user_id = 1234
+#	target = open('tmp', 'w')
+#	target1 = open('tmp1', 'w') #what the actual fuck, reqest.form input password return an int. Why does it return an int??? it returns a one or a 0.
+#	target.write(str(password))
+#	target1.write(username) #check tmp for local pw, check tmp1 for password from server. password from server is always correct but pw from from returns an int.
         User = UserClass(username, user_id, active=True)
-        if pw == password:
+        if pw == password: # pw and password do not appear to be the same. Needs to be fixed.
                 login_user()
                 return render_template('index.html')
 	else:
