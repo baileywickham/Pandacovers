@@ -32,12 +32,12 @@ def user_exists(username):
 
 def get_password(username):
 	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = %s", [username])
-	if result > 1: # Data exists
+	result = cur.execute("SELECT * FROM Users WHERE username = '" + username + "'")
+	if result > 0:
 		data = cur.fetchone()
-		localpw = data['password']
+		dbpass = data[4]
+	return dbpass
 	# After gathering password, sha256 should be verified, see random paste above
-	return localpw
 
 @app.route('/')
 def splash():
@@ -45,7 +45,7 @@ def splash():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	if request.method == 'POST' and 'inputUsername' in request.form:
+	if request.method == 'POST':
                 username = request.form['inputUsername']
                 pw = request.form['inputPassword']
 		app.logger.info(pw)
@@ -56,7 +56,9 @@ def login():
 	target = open('tmp', 'w')
 	target.write(pw)
         user_id = 1234
-        User = UserClass(username, user_id, active=True)
+        target = open('tmp1', 'w')
+	target.write(str(password))
+	User = UserClass(username, user_id, active=True)
         if pw == password:
                 login_user()
                 return render_template('index.html')
