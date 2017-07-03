@@ -39,7 +39,7 @@ def get_password(username):
 	return dbpass
 	# After gathering password, sha256 should be verified, see random paste above
 
-@app.route('/')
+@app.route('/login')
 def splash():
         return render_template('login.html')
 
@@ -61,7 +61,7 @@ def login():
 	User = UserClass(username, user_id, active=True)
         if pw == password:
                 login_user()
-                return render_template('index.html')
+                home() 
 	else:
 		flash('incorrect password')
         return render_template('login.html')
@@ -70,6 +70,18 @@ def login_user():
         pass 
 #lol
 
+@app.route('/home')
+def home():
+	return render_template('index.html')
+@app.route('/home', methods=['GET', 'POST']
+def smscall():
+	if request.method == 'POST'
+		when = form.request('inputDate')
+		where = form.request('inputLocation') #use where[:4] to grab the first 4 digits to call the store by number.
+		postition = form.requset('inputFob')
+		textingLocations = form.request('inputAskingLocations')
+		additonaltext = form.request('extraText')
+		
 @login_manager.user_loader
 def user_loader(userid):
         pass
