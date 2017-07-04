@@ -2,6 +2,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 import flask_login
 from flask_login import current_user
 import MySQLdb
+import plivo
 
 #TODO: login_user method, user_loader method
 # Prepare flask and login manager for use
@@ -16,6 +17,14 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'admin': 'password'}
 app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
+
+auth_id = ''
+auth_token = ''
+#p = plivo.RestAPI(auth_id, auth_token)
+
+#params = { 'src' : 'xxxxxxxxx', dst : '123456789<123456789', text : 'hello from bailey'} 
+#response = p.send_message(params)
+ #we still need to do this.
 
 db = MySQLdb.connect(host="localhost",
 		     user="root",
@@ -53,15 +62,11 @@ def login():
 		flash('incorrect username')
 
 	password = get_password(username)
-	target = open('tmp', 'w')
-	target.write(pw)
-        user_id = 1234
-        target = open('tmp1', 'w')
-	target.write(str(password))
-	User = UserClass(username, user_id, active=True)
+	user_id = 1234
+       	User = UserClass(username, user_id, active=True)
         if pw == password:
                 login_user()
-                home() 
+                return redirect(url_for('home')) 
 	else:
 		flash('incorrect password')
         return render_template('login.html')
@@ -73,15 +78,18 @@ def login_user():
 @app.route('/home')
 def home():
 	return render_template('index.html')
-@app.route('/home', methods=['GET', 'POST']
+
+
+@app.route('/home', methods=['GET', 'POST'])
 def smscall():
-	if request.method == 'POST'
+	if request.method == 'POST':
 		when = form.request('inputDate')
 		where = form.request('inputLocation') #use where[:4] to grab the first 4 digits to call the store by number.
 		postition = form.requset('inputFob')
 		textingLocations = form.request('inputAskingLocations')
 		additonaltext = form.request('extraText')
-		
+	return 'hellow woflrld'
+	
 @login_manager.user_loader
 def user_loader(userid):
         pass
