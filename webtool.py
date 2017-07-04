@@ -1,8 +1,10 @@
-from flask import Flask, flash, render_template, request, redirect, url_for
+from flask import Flask, flash, render_template, request, redirect, url_for, g
 import flask_login
 from flask_login import current_user
 import MySQLdb
 import plivo
+from functools import wraps
+
 
 #TODO: login_user method, user_loader method
 # Prepare flask and login manager for use
@@ -31,7 +33,13 @@ db = MySQLdb.connect(host="localhost",
 		     passwd="alexiscool",
 		     db="panda-login")
 #CURSORS MUST BE INSIDE METHODS OR ELSE IT CRASHES, NO GLOBAL CURSORS. cur = db.cursor()
-
+@app.route('/')
+def splash():
+	if User.is_autenticated:
+		return redirect(url_for('home'))
+	else:
+		return redirect(url_for('login'))
+		
 def user_exists(username):
 	cur = db.cursor()
 	if cur.execute("SELECT * FROM Users WHERE username = %s", [username]) != 0:
@@ -49,7 +57,7 @@ def get_password(username):
 	# After gathering password, sha256 should be verified, see random paste above
 
 @app.route('/login')
-def splash():
+def loginfunc():
         return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -103,6 +111,15 @@ class UserClass(flask_login.UserMixin):
                 self.active = active
 def is_active(self):
         return self.active
+def login_required(g):
+	@wraps(f)
+	def decorated_function(*args, **kwargs):
+		if g.user is None:
+			return redirect(url_for('login', next=request.url))
+		return f(*args, **kwargs)
+	return decorated_function
+
+
 #remove debuger for production
 if __name__ == '__main__':
         app.run(debug=True)
