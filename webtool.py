@@ -22,11 +22,10 @@ app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
 
 auth_id = ''
 auth_token = ''
-#p = plivo.RestAPI(auth_id, auth_token)
 
-#params = { 'src' : 'xxxxxxxxx', dst : '123456789<123456789', text : 'hello from bailey'} 
-#response = p.send_message(params)
-#move this to a call function on post method.
+#p = plivo.RestAPI(auth_id, auth_token) this can be commented out and left here
+
+
 
 db = MySQLdb.connect(host="localhost",
 		     user="root",
@@ -88,6 +87,7 @@ def home():
 	return render_template('index.html')
 
 
+
 @app.route('/home', methods=['GET', 'POST'])
 def smscall():
 	if request.method == 'POST':
@@ -96,7 +96,11 @@ def smscall():
 		postition = form.requset('inputFob')
 		textingLocations = form.request('inputAskingLocations')
 		additonaltext = form.request('extraText')
-	
+
+	#params = { 'src' : 'xxxxxxxxx', dst : '123456789<123456789', text : 'hello from bailey'} 
+	#response = p.send_message(params)
+
+
 @login_manager.user_loader
 def user_loader(userid):
         pass
@@ -110,6 +114,8 @@ class UserClass(flask_login.UserMixin):
                 self.active = active
 def is_active(self):
         return self.active
+
+#this doesnt work, I dont even know what it is
 def login_required(g):
 	@wraps(f)
 	def decorated_function(*args, **kwargs):
