@@ -26,7 +26,7 @@ auth_token = ''
 
 #params = { 'src' : 'xxxxxxxxx', dst : '123456789<123456789', text : 'hello from bailey'} 
 #response = p.send_message(params)
- #we still need to do this.
+#move this to a call function on post method.
 
 db = MySQLdb.connect(host="localhost",
 		     user="root",
@@ -96,7 +96,6 @@ def smscall():
 		postition = form.requset('inputFob')
 		textingLocations = form.request('inputAskingLocations')
 		additonaltext = form.request('extraText')
-	return 'hellow woflrld'
 	
 @login_manager.user_loader
 def user_loader(userid):
