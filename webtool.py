@@ -33,7 +33,7 @@ def user_exists(username):
 
 def get_password(username):
 	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", username)
+	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", [username])
 	if result > 0:
 		data = cur.fetchone()
 		user_pass = data[4]
@@ -43,7 +43,7 @@ def get_password(username):
 
 def get_id(username):
 	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", username)
+	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", [username])
 	if result > 0:
 		data = cur.fetchone()
 		user_id = data[5] # This location could be wrong, I did it from memory
