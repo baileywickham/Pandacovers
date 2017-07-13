@@ -1,6 +1,8 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, make_response
+import flask_login
 from flask_login import current_user
-import MySQLdb
+import pymysql
+pymysql.install_as_MySQLdb()
 
 #TODO: login_user method, user_loader method
 # Prepare flask and login manager for use
@@ -15,7 +17,7 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'admin': 'password'}
 app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
-db = MySQLdb.connect(host="localhost",
+db =pymysql.connect(host="localhost",
 		     user="root",
 		     passwd="alexiscool",
 		     db="panda-login")
