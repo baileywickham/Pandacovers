@@ -1,5 +1,4 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, make_response
-import flask_login
 from flask_login import current_user
 import MySQLdb
 
@@ -21,6 +20,8 @@ db = MySQLdb.connect(host="localhost",
 		     passwd="alexiscool",
 		     db="panda-login")
 #CURSORS MUST BE INSIDE METHODS OR ELSE IT CRASHES, NO GLOBAL CURSORS. cur = db.cursor()
+def main():
+    print('hello world')
 
 def user_exists(username):
 	cur = db.cursor()
@@ -55,31 +56,31 @@ def cookie_exists(username):
 	return False
 
 def set_cookie(username): # This was hashed together, really needs testing
-	response = make_response(render_template('login.html'))
-        response.set_cookie('username', username)
-        return response
+    response = make_response(render_template('login.html'))
+    response.set_cookie('username', username)
+    return response
 
 @app.route('/login')
 def splash():
-        return render_template('login.html')
+    return render_template('login.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	if request.method == 'POST':
-                username = request.form['inputUsername']
-                pw = request.form['inputPassword']
-		app.logger.info(pw)
-	if not user_exists(username):
-		flash('incorrect username')
+    if request.method == 'POST':
+        username = request.form['inputUsername']
+        pw = request.form['inputPassword']
+    app.logger.info(pw)
+    if not user_exists(username):
+        flash('incorrect username')
 
-	dbpassword = get_password(username)
-	User = UserClass(username, user_id, active=True) # Do we actually need this? I think the same effect can be done with cookies
-        if pw == dbpassword:
-                flask_login.login_user(username) # Creates a login session
-		set_cookie(username)
-                home() 
-	else:
-		flash('incorrect password')
+    dbpassword = get_password(username)
+    User = UserClass(username, user_id, active=True) # Do we actually need this? I think the same effect can be done with cookies
+    if pw == dbpassword:
+        flask_login.login_user(username) # Creates a login session
+        set_cookie(username)
+        home() 
+    else:
+        flash('incorrect password')
         return render_template('login.html')
 
 def logout(user):
@@ -106,7 +107,7 @@ def smscall():
 """		
 @login_manager.user_loader
 def user_loader(userid):
-        pass
+    pass
 # This is where the user object will be created using UserClass, this will likely be called from login_user# This is where the user's session gets initiated
 
 #this creates a user object, the usermixin is a premade flask user_login class.
