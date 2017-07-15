@@ -25,6 +25,15 @@ db =pymysql.connect(host="localhost",
 def main():
     print('hello world')
 
+def requireLogged(f):
+    @wraps(f)
+    def wrap(args, **kwargs):
+        if 'logged_in' in session:
+            return f(args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
+
 def user_exists(username):
 	cur = db.cursor()
 	if cur.execute("SELECT * FROM Users WHERE username = %s", [username]) != 0:
@@ -52,15 +61,6 @@ def get_id(username):
 		user_id = data[5] # This location could be wrong, I did it from memory
 	cur.close()
 	return user_id
-def cookie_exists(username):
-	if username in request.cookies: # request.cookies is a dict, as such we can use this if statement
-		return True
-	return False
-
-def set_cookie(username): # This was hashed together, really needs testing
-    response = make_response(render_template('login.html'))
-    response.set_cookie('username', username)
-    return response
 
 @app.route('/login')
 def splash():
@@ -78,8 +78,9 @@ def login():
     dbpassword = get_password(username)
     User = UserClass(username, user_id, active=True) # Do we actually need this? I think the same effect can be done with cookies
     if pw == dbpassword:
-        flask_login.login_user(username) # Creates a login session
-        set_cookie(username)
+	session['logged_in'] = True
+#        session['isManager'] = bool(Manager) I am going to consolidate managers and users into one table with a 1 or 0 value for manager
+        session['username'] = username
         home() 
     else:
         flash('incorrect password')
@@ -94,7 +95,7 @@ def unauthorized():
 	return 'Unauthorized: you need to be logged in.'
 
 @app.route('/home')
-@flask_login.login_required
+@requireLogged
 def home():
 	return render_template('index.html')
 """
