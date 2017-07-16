@@ -18,8 +18,9 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 users = {'admin': 'password'}
 app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
-db =pymysql.connect(host="localhost",
-		     user="root",
+
+db = pymysql.connect(host="74.91.125.179",
+		     user="bailey-vs",
 		     passwd="alexiscool",
 		     db="panda-login")
 #CURSORS MUST BE INSIDE METHODS OR ELSE IT CRASHES, NO GLOBAL CURSORS. cur = db.cursor()
