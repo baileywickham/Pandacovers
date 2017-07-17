@@ -16,15 +16,17 @@ if sha256_crypt.verify(password, dbpass):
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-users = {'admin': 'password'}
 app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
-db =pymysql.connect(host="localhost",
-		     user="root",
+db = pymysql.connect(host="74.91.125.179",
+		     user="bailey-vs",
 		     passwd="alexiscool",
 		     db="panda-login")
 #CURSORS MUST BE INSIDE METHODS OR ELSE IT CRASHES, NO GLOBAL CURSORS. cur = db.cursor()
+@app.route('/')
 def main():
-    print('hello world')
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    return redirect(url_for('splash'))
 
 def requireLogged(f):
 	@wraps(f)
