@@ -16,15 +16,20 @@ if sha256_crypt.verify(password, dbpass):
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-users = {'admin': 'password'}
 app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
+#db = pymysql.connect(host="74.91.125.179",
+#		     user="bailey-vs",
+#		     passwd="alexiscool",
+#		     db="panda-login")
 db =pymysql.connect(host="localhost",
-		     user="root",
-		     passwd="alexiscool",
-		     db="panda-login")
-#CURSORS MUST BE INSIDE METHODS OR ELSE IT CRASHES, NO GLOBAL CURSORS. cur = db.cursor()
+  		     user="root",
+   		     passwd="alexiscool",
+  		     db="panda-login")
+@app.route('/')
 def main():
-    print('hello world')
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    return redirect(url_for('splash'))
 
 def requireLogged(f):
 	@wraps(f)
@@ -37,7 +42,7 @@ def requireLogged(f):
 
 def user_exists(username):
 	cur = db.cursor()
-	if cur.execute("SELECT * FROM Users WHERE username = %s", [username]) != 0:
+	if cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username)):
 		cur.close()
 		return True
 	cur.close()
@@ -45,18 +50,20 @@ def user_exists(username):
 	# Non-zero value indicates that the user exists
 
 def get_password(username):
-	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", username)
-	if result > 0:
-		data = cur.fetchone()
-		user_pass = data[4]
-	cur.close()
-	return user_pass
+    cur = db.cursor()
+    result = cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username))
+    if result > 0:
+        data = cur.fetchone()
+        user_pass = data[4]
+    else:
+        flash('incorect username')
+    cur.close()
+    return user_pass
 	# After gathering password, sha256 should be verified, see random paste above
 
 def get_id(username):
 	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = '%s'", username)
+	result = cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username))
 	if result > 0:
 		data = cur.fetchone()
 		user_id = data[5] # This location could be wrong, I did it from memory
@@ -75,7 +82,8 @@ def login():
     app.logger.info(pw)
     if not user_exists(username):
         flash('incorrect username')
-
+        return render_template('login.html')
+    user_id = get_id(username)
     dbpassword = get_password(username)
     User = UserClass(username, user_id, active=True) # Do we actually need this? I think the same effect can be done with cookies
     if pw == dbpassword:
