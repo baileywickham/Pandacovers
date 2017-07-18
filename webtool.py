@@ -35,11 +35,11 @@ def main():
 
 def requireLogged(f):
 	@wraps(f)
-	def wrap(args, **kwargs):
+	def wrap(*args, **kwargs):
 		if 'logged_in' in session:
-			return f(args, **kwargs)
+			return f(*args, **kwargs)
 		else:
-			return redirect(url_for('index'))
+			return redirect(url_for('home'))
 	return wrap
 
 def user_exists(username):
@@ -92,7 +92,7 @@ def login():
         session['logged_in'] = True
 #        session['isManager'] = bool(Manager) I am going to consolidate managers and users into one table with a 1 or 0 value for manager
         session['username'] = username
-        home() 
+        return redirect(url_for('home')) 
     else:
         flash('incorrect password')
         return render_template('login.html')
@@ -106,7 +106,7 @@ def unauthorized():
 	return 'Unauthorized: you need to be logged in.'
 
 @app.route('/home')
-@requireLogged
+#@requireLogged
 def home():
 	return render_template('index.html')
 """
