@@ -17,10 +17,6 @@ app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 app.secret_key = '1234'
-auth_id = "MAYJNHN2E3YJA0ZTKYMJ"
-auth_token = "YTA0ZWFjZjM5NTNlOGJkMzllMzYwN2Y3NzI5M2Zi"
-p = plivo.RestAPI(auth_id, auth_token)
-
 db = pymysql.connect(host="74.91.125.179",
 		     user="bailey-vs",
 		     passwd="alexiscool",
@@ -113,33 +109,16 @@ def unauthorized():
 #@requireLogged
 def home():
 	return render_template('index.html')
-
-@app.route('/smsreply', methods=['GET', 'POST'])
-def smsreply():
-    if request.method == 'POST':
-        print('smsreply is working')
-@app.route('/home', methods=['GET', 'POST'])
+"""
+@app.route('/home', methods=['GET', 'POST']
 def smscall():
-    if request.method == 'POST':
-        when = request.form.get('inputDate')
-        where = request.form.get('inputLocation') #use where[:4] to grab the first 4 digits to call the store by number.
-        postition = request.form.get('inputFob')
-        textingLocations = request.form.get('inputAskingLocations')
-        additonaltext = request.form.get('extraText')
-
-
-        params = {
-    'src': '1111111111', 
-    'dst' : '2222222222', 
-    'text' : u"Hello, how are you?"
-    }
-        response = p.send_message(params)
-        
-        
-        flash('your message has been sent')
-        return render_template('index.html')
-
-
+	if request.method == 'POST'
+		when = form.request('inputDate')
+		where = form.request('inputLocation') #use where[:4] to grab the first 4 digits to call the store by number.
+		postition = form.requset('inputFob')
+		textingLocations = form.request('inputAskingLocations')
+		additonaltext = form.request('extraText')
+"""		
 @login_manager.user_loader
 def user_loader(userid):
     pass
