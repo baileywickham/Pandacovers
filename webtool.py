@@ -3,6 +3,7 @@ import flask_login
 from flask_login import current_user
 import pymysql
 from functools import wraps
+import plivo
 pymysql.install_as_MySQLdb()
 
 #TODO: login_user method, user_loader method
@@ -110,14 +111,20 @@ def unauthorized():
 	return 'Unauthorized: you need to be logged in.'
 
 @app.route('/home')
-#@requireLogged
+#@requireLogged this wrapper doesn't work for some reason
 def home():
 	return render_template('index.html')
+
+@app.route('/responses')
+def responses():
+    return render_template('responses.html')
+
 
 @app.route('/smsreply', methods=['GET', 'POST'])
 def smsreply():
     if request.method == 'POST':
         print('smsreply is working')
+
 @app.route('/home', methods=['GET', 'POST'])
 def smscall():
     if request.method == 'POST':
