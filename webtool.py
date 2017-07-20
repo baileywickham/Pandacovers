@@ -1,4 +1,4 @@
-from flask import Flask, flash, render_template, request, redirect, url_for, make_response
+from flask import Flask, flash, render_template, request, redirect, url_for, make_response, session
 import flask_login
 from flask_login import current_user
 import pymysql
@@ -16,15 +16,17 @@ if sha256_crypt.verify(password, dbpass):
 app = Flask(__name__)
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-app.secret_key = '1234' #TODO: THIS NEEDS TO BE CHANGED IN THE FUTURE
-#db = pymysql.connect(host="74.91.125.179",
-#		     user="bailey-vs",
-#		     passwd="alexiscool",
-#		     db="panda-login")
+app.secret_key = '1234'
+db = pymysql.connect(host="74.91.125.179",
+		     user="bailey-vs",
+		     passwd="alexiscool",
+		     db="panda-login")
+'''
 db =pymysql.connect(host="localhost",
   		     user="root",
    		     passwd="alexiscool",
   		     db="panda-login")
+'''
 @app.route('/')
 def main():
     if current_user.is_authenticated:
@@ -33,11 +35,11 @@ def main():
 
 def requireLogged(f):
 	@wraps(f)
-	def wrap(args, **kwargs):
+	def wrap(*args, **kwargs):
 		if 'logged_in' in session:
-			return f(args, **kwargs)
+			return f(*args, **kwargs)
 		else:
-			return redirect(url_for('index'))
+			return redirect(url_for('home'))
 	return wrap
 
 def user_exists(username):
@@ -90,7 +92,7 @@ def login():
         session['logged_in'] = True
 #        session['isManager'] = bool(Manager) I am going to consolidate managers and users into one table with a 1 or 0 value for manager
         session['username'] = username
-        home() 
+        return redirect(url_for('home')) 
     else:
         flash('incorrect password')
         return render_template('login.html')
@@ -104,7 +106,7 @@ def unauthorized():
 	return 'Unauthorized: you need to be logged in.'
 
 @app.route('/home')
-@requireLogged
+#@requireLogged
 def home():
 	return render_template('index.html')
 """
