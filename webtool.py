@@ -1,4 +1,6 @@
 from flask import Flask, flash, render_template, request, redirect, url_for, make_response, session
+import plivo
+from passlib.hash import sha256_crypt 
 import flask_login
 from flask_login import current_user
 import pymysql
@@ -92,7 +94,7 @@ def login():
     user_id = get_id(username)
     dbpassword = get_password(username)
     User = UserClass(username, user_id, active=True) # Do we actually need this? I think the same effect can be done with cookies
-    if pw == dbpassword:
+    if sha256_crypt.verify(pw, dbpassword):
         session['logged_in'] = True
 #        session['isManager'] = bool(Manager) I am going to consolidate managers and users into one table with a 1 or 0 value for manager
         session['username'] = username
