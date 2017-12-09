@@ -24,14 +24,14 @@ auth_token = "YTA0ZWFjZjM5NTNlOGJkMzllMzYwN2Y3NzI5M2Zi"
 p = plivo.RestAPI(auth_id, auth_token)
 
 db = pymysql.connect(host="74.91.125.179",
-		     user="bailey-vs",
-		     passwd="alexiscool",
-		     db="panda-login")
+             user="bailey-vs",
+             passwd="alexiscool",
+             db="panda-login")
 '''
 db =pymysql.connect(host="localhost",
-  		     user="root",
-   		     passwd="alexiscool",
-  		     db="panda-login")
+             user="root",
+             passwd="alexiscool",
+             db="panda-login")
 '''
 @app.route('/')
 def main():
@@ -40,22 +40,22 @@ def main():
     return redirect(url_for('splash'))
 
 def requireLogged(f):
-	@wraps(f)
-	def wrap(*args, **kwargs):
-		if 'logged_in' in session:
-			return f(*args, **kwargs)
-		else:
-			return redirect(url_for('home'))
-	return wrap
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('home'))
+    return wrap
 
 def user_exists(username):
-	cur = db.cursor()
-	if cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username)):
-		cur.close()
-		return True
-	cur.close()
-	return False
-	# Non-zero value indicates that the user exists
+    cur = db.cursor()
+    if cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username)):
+        cur.close()
+        return True
+    cur.close()
+    return False
+    # Non-zero value indicates that the user exists
 
 def get_password(username):
     cur = db.cursor()
@@ -67,16 +67,16 @@ def get_password(username):
         flash('incorect username')
     cur.close()
     return user_pass
-	# After gathering password, sha256 should be verified, see random paste above
+    # After gathering password, sha256 should be verified, see random paste above
 
 def get_id(username):
-	cur = db.cursor()
-	result = cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username))
-	if result > 0:
-		data = cur.fetchone()
-		user_id = data[5] # This location could be wrong, I did it from memory
-	cur.close()
-	return user_id
+    cur = db.cursor()
+    result = cur.execute("SELECT * FROM Users WHERE username = '{0}'".format(username))
+    if result > 0:
+        data = cur.fetchone()
+        user_id = data[5] # This location could be wrong, I did it from memory
+    cur.close()
+    return user_id
 
 @app.route('/login')
 def splash():
@@ -104,22 +104,26 @@ def login():
         return render_template('login.html')
 
 def logout(user):
-	flask_login.logout_user()
-	flash('Logged out successfully')
+    flask_login.logout_user()
+    flash('Logged out successfully')
 
 @login_manager.unauthorized_handler
 def unauthorized():
-	return 'Unauthorized: you need to be logged in.'
+    return 'Unauthorized: you need to be logged in.'
+
 
 @app.route('/home')
-#@requireLogged
+# @requireLogged
 def home():
-	return render_template('index.html')
+    return render_template('index.html')
+
 
 @app.route('/smsreply', methods=['GET', 'POST'])
 def smsreply():
     if request.method == 'POST':
         print('smsreply is working')
+
+
 @app.route('/home', methods=['GET', 'POST'])
 def smscall():
     if request.method == 'POST':
@@ -128,19 +132,15 @@ def smscall():
         postition = request.form.get('inputFob')
         textingLocations = request.form.get('inputAskingLocations')
         additonaltext = request.form.get('extraText')
-
-
-        params = {
-    'src': '1111111111', 
-    'dst' : '2222222222', 
-    'text' : u"Hello, how are you?"
-    }
-        response = p.send_message(params)
-        
         
         flash('your message has been sent')
         return render_template('index.html')
 
+
+@app.route('/sms/', methods=['GET', 'POST'])
+def replyToAnything():
+    with open('ftp.txt' 'w') as file:
+        file.write(request)
 
 @login_manager.user_loader
 def user_loader(userid):
